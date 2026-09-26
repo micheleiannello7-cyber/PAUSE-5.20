@@ -26,17 +26,22 @@ type Mode = "stories" | "lessons";
 
 // Fasi: 0 intro · 1 profilo (nome/genere/età) · 2 scelta formato · 3 argomenti.
 const STEPS = 4;
+// Fase test: si parte direttamente dagli argomenti (intro, profilo e scelta
+// formato saltati; i formati restano modificabili dai chip in alto).
+// Rimetti a 0 per ripristinare il percorso completo.
+const START_STEP = 3;
+const DEFAULT_MODES: Mode[] = ["stories", "lessons"];
 const LAYOUT = LinearTransition.duration(340).easing(Easing.inOut(Easing.cubic));
 const enterFrom = (dir: SwipeDir) => (dir > 0 ? FadeInRight : FadeInLeft).duration(380).easing(Easing.out(Easing.cubic));
 
 export default function Onboarding() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(START_STEP);
   const [dir, setDir] = useState<SwipeDir>(1);
   const [notice, setNotice] = useState<OnboardingNotice | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [modes, setModes] = useState<Set<Mode>>(new Set<Mode>());
+  const [modes, setModes] = useState<Set<Mode>>(new Set<Mode>(START_STEP >= 2 ? DEFAULT_MODES : []));
   const [saving, setSaving] = useState(false);
   // Passo profilo: tutti i campi sono facoltativi (il nome non è obbligatorio).
   const [profile, setProfile] = useState<ProfileDraft>({ name: "", gender: null, age: null });
@@ -72,7 +77,7 @@ export default function Onboarding() {
     );
   };
 
-  const canSwipe = (d: SwipeDir) => (d < 0 ? step > 0 : step === 0 || canContinue);
+  const canSwipe = (d: SwipeDir) => (d < 0 ? step > START_STEP : step === 0 || canContinue);
   const onSwipe = (d: SwipeDir) => {
     if (d < 0) { goTo(step - 1); return; }
     if (step === 3) { onContinue(); return; }
@@ -186,7 +191,9 @@ export default function Onboarding() {
       <OnboardingToast notice={notice} bottom={insets.bottom + 132} onHide={() => setNotice(null)} />
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
-        <PagerDots count={STEPS} index={step} color={ONB.cyan} onSelect={(i) => i < step && goTo(i)} style={styles.dots} testID="onboarding-dots" />
+        {STEPS - START_STEP > 1 ? (
+          <PagerDots count={STEPS - START_STEP} index={step - START_STEP} color={ONB.cyan} onSelect={(i) => i + START_STEP < step && goTo(i + START_STEP)} style={styles.dots} testID="onboarding-dots" />
+        ) : null}
         <Pressable
           onPress={() => {
             if (!canContinue) { explainMissing(); return; }

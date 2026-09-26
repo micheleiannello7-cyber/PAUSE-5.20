@@ -17,11 +17,11 @@ type Props = {
   categories: Category[]; selected: Set<string>; modes: Set<StoryKind>;
   onToggleCategory: (id: string) => void; onToggleMode: (mode: StoryKind) => void;
   testID: string; modeIdPrefix?: string; disabled?: boolean; staggerIn?: boolean;
-  titleAccessory?: ReactNode; status?: ReactNode;
+  titleAccessory?: ReactNode; status?: ReactNode; columns?: number;
 };
 
 export function TopicPicker({ categories, selected, modes, onToggleCategory, onToggleMode,
-  testID, modeIdPrefix = "onboarding", disabled = false, staggerIn = false, titleAccessory, status }: Props) {
+  testID, modeIdPrefix = "onboarding", disabled = false, staggerIn = false, titleAccessory, status, columns }: Props) {
   const { t } = useI18n();
   const formats = modes.size === 2 ? t.onb_formats_both : modes.has("lessons") ? t.onb_formats_lessons : t.onb_formats_stories;
   return (
@@ -36,7 +36,7 @@ export function TopicPicker({ categories, selected, modes, onToggleCategory, onT
         <Text style={styles.hintText} testID={`${testID}-hint-text`}>{t.onb_topics_hint.replace("{formats}", formats)}</Text>
       </Animated.View>
       {status}
-      <CategoryGrid compact glass staggerIn={staggerIn} disabled={disabled} categories={categories}
+      <CategoryGrid compact glass staggerIn={staggerIn} disabled={disabled} categories={categories} columns={columns}
         selected={selected} modes={Array.from(modes)} onToggle={onToggleCategory} />
     </View>
   );

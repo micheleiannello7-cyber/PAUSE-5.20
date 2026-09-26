@@ -40,7 +40,7 @@ export default function Explore() {
       ) : (
         <ScrollView style={styles.scroll} testID="explore-scroll" showsVerticalScrollIndicator={false}
           bounces={false} contentContainerStyle={{ paddingBottom: insets.bottom + spacing.md }}>
-          <TopicPicker testID="explore" modeIdPrefix="explore" categories={cats.data!} selected={selected} modes={modes}
+          <TopicPicker testID="explore" modeIdPrefix="explore" categories={cats.data!} selected={selected} modes={modes} columns={4}
             onToggleCategory={onToggleCategory} onToggleMode={onToggleMode} disabled={save.isPending}
             titleAccessory={<LimitBadge testID="explore-limit-badge" />}
             status={<View testID="explore-save-status" accessibilityLiveRegion="polite">

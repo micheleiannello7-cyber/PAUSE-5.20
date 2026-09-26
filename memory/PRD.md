@@ -155,3 +155,10 @@ pre-generati (storie, capitoli, copertine, audio TTS) distribuiti dal backend.
 - File `.env` di ambiente (EXPO_PACKAGER_*, MONGO_URL) preservati, non sovrascritti.
 - Stripe / TTS ElevenLabs lasciati disattivati come nella configurazione originale.
 
+
+## Aggiornamento UI (giugno 2026)
+- Home: rimosso badge inferiore "Hai già letto X storie" (componente eliminato); nuovo contatore compatto nell'header (`home-read-counter`, icona libri 3D + numero da `completed_story_ids`) → tap apre `/read-stories` (riepilogo esistente della sessione). Card storie Home INVARIATE (tentativo di riduzione annullato su richiesta utente).
+- Tab Categorie: griglia a 4 colonne con tessere dense (prop `columns` di CategoryGrid/TopicPicker), tutto in una schermata senza scroll su 390x844. Onboarding non toccato (3 colonne).
+- Onboarding: parte direttamente dagli argomenti (`START_STEP = 3` in app/onboarding.tsx), formati preselezionati entrambi; intro/profilo/formato saltati temporaneamente.
+- Lettura: contenitori capitoli con un unico colore = accento del tema app (`colors.brand`), identico per tutte le storie e capitoli; rimosso `src/story-palette.ts` (tinte per categoria).
+- Test: /app/test_reports/iteration_11.json, iteration_12.json (tutti PASS).

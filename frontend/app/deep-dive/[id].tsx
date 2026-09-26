@@ -23,7 +23,6 @@ import { SwipeBack } from "@/src/components/swipe-back";
 import { StoryInfoGrid } from "@/src/components/story-info-grid";
 import { ReaderCoverBackdrop, CoverFrame } from "@/src/components/reader-cover-backdrop";
 import { ReaderEndingBackdrop } from "@/src/components/reader-ending-backdrop";
-import { storyFamily } from "@/src/story-palette";
 import { HighlightedTitle } from "@/src/components/highlighted-title";
 import { StoryAudioProvider, AudioSheet, AudioMiniBadge, IntroListenButton } from "@/src/components/story-audio-player";
 import { ReaderHeader, READER_HEADER_H } from "@/src/components/reader-header";
@@ -121,9 +120,9 @@ export default function DeepDive() {
   // della scheda. Da qui in su la barra col titolo piccolo resta nascosta,
   // così tornando all'introduzione la copertina è di nuovo libera.
   useEffect(() => { bigTitleY.value = coverTop + cardH + spacing.md; }, [coverTop, cardH, bigTitleY]);
-  // Colore del tema della storia: solo un velo appena percettibile in alto sul
-  // fondo dark-navy della lettura (i contenitori dei capitoli ne riprendono la famiglia).
-  const tint = storyFamily(story?.category_id)[0];
+  // Colore d'accento del tema dell'app (uguale per ogni storia): solo un velo
+  // appena percettibile in alto sul fondo della lettura, stesso colore dei capitoli.
+  const tint = colors.brand;
   // Ultimo scroll programmatico (apertura su un capitolo, ripresa): solo un
   // movimento del lettore oltre quel punto conta come "gesto" per salvare.
   const autoY = useSharedValue(0);

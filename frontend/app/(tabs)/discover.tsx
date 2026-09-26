@@ -15,7 +15,7 @@ import { PauseLogo } from "@/src/components/pause-logo";
 import { GradientButton } from "@/src/components/gradient-button";
 import { HomeCategoryTile } from "@/src/components/home-controls";
 import { HomeStoryDeck } from "@/src/components/home-story-deck";
-import { HomeReadingProgress } from "@/src/components/home-reading-progress";
+import { HomeReadCounter } from "@/src/components/home-read-counter";
 import { HomeBackdrop } from "@/src/components/home-backdrop";
 import { ResumeCard } from "@/src/components/resume-card";
 import { MilestoneCelebration } from "@/src/components/milestone-celebration";
@@ -204,12 +204,15 @@ export default function Discover() {
       <HomeBackdrop />
       <View style={[styles.header, { width }]} testID="home-header">
         <PauseLogo prominent />
-        {firstName ? (
-          <View style={styles.greeting} testID="home-greeting">
-            <Text style={styles.greetingHi} numberOfLines={1}>{t.greeting},</Text>
-            <Text style={styles.greetingName} numberOfLines={1} testID="home-greeting-name">{firstName}</Text>
-          </View>
-        ) : null}
+        <View style={styles.headerRight}>
+          <HomeReadCounter count={completedCount ?? 0} />
+          {firstName ? (
+            <View style={styles.greeting} testID="home-greeting">
+              <Text style={styles.greetingHi} numberOfLines={1}>{t.greeting},</Text>
+              <Text style={styles.greetingName} numberOfLines={1} testID="home-greeting-name">{firstName}</Text>
+            </View>
+          ) : null}
+        </View>
       </View>
       <View testID="home-content" style={[styles.content, { width }]}>
         <View style={styles.deckArea} onLayout={onDeckLayout} testID="home-deck-area">
@@ -254,9 +257,6 @@ export default function Discover() {
             </View>
           </View>
         ) : null}
-        <View style={[styles.progressSection, { marginHorizontal: gridPadding }]}>
-          <HomeReadingProgress count={userState?.completed_story_ids.length ?? 0} />
-        </View>
       </View>
       <MilestoneCelebration milestone={milestone} onClose={dismissMilestone} onStats={() => { dismissMilestone(); router.push("/stats"); }} />
     </View>
@@ -266,9 +266,10 @@ export default function Discover() {
 const useStyles = makeStyles((colors) => ({
   container: { flex: 1, backgroundColor: colors.surface, alignItems: "center" },
   header: { paddingHorizontal: 12, height: 58, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  greeting: { flexShrink: 1, marginLeft: spacing.md, alignItems: "flex-end" },
+  headerRight: { flexShrink: 1, flexDirection: "row", alignItems: "center", gap: spacing.md },
+  greeting: { flexShrink: 1, alignItems: "flex-end" },
   greetingHi: { color: colors.onSurfaceTertiary, fontFamily: typography.bodyMedium, fontSize: 11, letterSpacing: 0.3, lineHeight: 14 },
-  greetingName: { color: colors.brand, fontFamily: typography.displayBold, fontSize: 17, letterSpacing: -0.2, lineHeight: 21, maxWidth: 170 },
+  greetingName: { color: colors.brand, fontFamily: typography.displayBold, fontSize: 17, letterSpacing: -0.2, lineHeight: 21, maxWidth: 130 },
   content: { flex: 1, alignSelf: "center", paddingBottom: 12 },
   deckArea: { flex: 1, justifyContent: "center", minHeight: 190 },
   catsSection: {},
@@ -284,7 +285,6 @@ const useStyles = makeStyles((colors) => ({
     boxShadow: `0px 6px 18px ${withAlpha(colors.surface, 0.6)}` as any,
   },
   toastText: { color: colors.onSurface, fontFamily: typography.bodyMedium, fontSize: 12 },
-  progressSection: { paddingTop: 16 },
   resumeSection: { marginTop: 10 },
   loading: { flex: 1, alignItems: "center", justifyContent: "center" },
   pressed: { opacity: 0.92 },

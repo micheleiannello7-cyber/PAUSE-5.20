@@ -1,6 +1,6 @@
 // PAUSE — una sezione (capitolo) della lettura verticale: contenitore in
 // vetro scuro (quasi nero, traslucido) con bordo sottile e alone morbidissimo
-// nel colore del tema della storia; dentro: occhiello "CAPITOLO X", titolo,
+// nel colore d'accento del tema dell'app; dentro: occhiello "CAPITOLO X", titolo,
 // corpo in paragrafi brevi. Nessun contenuto extra.
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,7 +9,6 @@ import Animated, { SharedValue, useAnimatedStyle, withTiming } from "react-nativ
 import { Chapter, Story } from "@/src/api";
 import { makeStyles, useTheme, spacing, typography, withAlpha } from "@/src/theme";
 import { HighlightedTitle } from "@/src/components/highlighted-title";
-import { chapterTint } from "@/src/story-palette";
 
 // Larghezza di lettura controllata: su tablet il testo non si allarga oltre
 // una riga confortevole, su telefono usa tutta la larghezza meno i margini.
@@ -62,9 +61,9 @@ export function ChapterSection({
 }: { chapter: Chapter; story: Story; eyebrow: string; current: SharedValue<number>; /** 0 normale · 1 · 2 = tipografia più compatta per stare in una pagina. */ compact?: number }) {
   const styles = useStyles();
   const { colors } = useTheme();
-  // Una sola famiglia cromatica per storia (dal tema/categoria): i capitoli
-  // scorrono dentro quella palette con variazioni molto lievi.
-  const tint = chapterTint(story.category_id, chapter.number - 1, story.chapters.length);
+  // Un solo colore per tutti i capitoli di tutte le storie: l'accento del tema
+  // corrente dell'app (base = cyan), mai la categoria della storia.
+  const tint = colors.brand;
   // La pagina corrente è piena; quella che entra/esce durante il passaggio
   // resta appena attenuata finché non è al centro (fade leggerissimo).
   const focus = useAnimatedStyle(() => ({

@@ -25,8 +25,9 @@ export function toggleInterest(prev: Set<string>, id: string): Set<string> {
 // Same picker/persistence everywhere. Small phones use two columns to keep
 // the reference artwork and existing full category names readable.
 export function CategoryGrid({
-  categories, selected, onToggle, modes, staggerIn = false, disabled = false,
-}: { categories: Category[]; selected: Set<string>; onToggle: (id: string) => void; compact?: boolean; modes?: ("stories" | "lessons")[]; staggerIn?: boolean; disabled?: boolean; /** Stile "vetro" dark navy dell'onboarding (icone ritagliate, tessere con gradiente). */ glass?: boolean }) {
+  categories, selected, onToggle, modes, staggerIn = false, disabled = false, columns: fixedColumns,
+}: { categories: Category[]; selected: Set<string>; onToggle: (id: string) => void; compact?: boolean; modes?: ("stories" | "lessons")[]; staggerIn?: boolean; disabled?: boolean; /** Stile "vetro" dark navy dell'onboarding (icone ritagliate, tessere con gradiente). */ glass?: boolean;
+  /** Numero fisso di colonne (tessere dense, es. 4 nel tab Categorie per stare in una schermata). */ columns?: number }) {
   const allActive = selected.has(ALL_ID);
   const { t } = useI18n();
   const styles = useStyles();
@@ -37,7 +38,8 @@ export function CategoryGrid({
   // Larghezza tessere dal contenitore misurato: sempre 3 colonne centrate,
   // anche su schermi stretti (con le percentuali scendeva a 2 per riga).
   const [gridW, setGridW] = useState(0);
-  const columns = gridW < 315 ? 2 : gridW >= 560 ? 4 : 3;
+  const columns = fixedColumns ?? (gridW < 315 ? 2 : gridW >= 560 ? 4 : 3);
+  const dense = fixedColumns != null;
   const tileW = gridW > 0 ? Math.floor((gridW - spacing.xs * 2 - spacing.sm * (columns - 1)) / columns) : undefined;
 
   // Count label reflects which content modes are active (curiosities / lessons
@@ -93,14 +95,15 @@ export function CategoryGrid({
               accessibilityLabel={`${c.name}, ${countFor(c)}`}
               style={({ pressed }) => [
                 styles.tile,
+                dense && styles.denseTile,
                 pressed && styles.pressed,
               ]}
             >
               <LinearGradient colors={[palette.top, palette.surface]} style={styles.glassBg} pointerEvents="none" />
               <CategoryArtwork category={c} reference testID={`category-art-${c.id}`} />
               <View style={styles.labels}>
-                <Text testID={`category-name-${c.id}`} style={[styles.tileName, tileW >= 140 && styles.largeName]} numberOfLines={2}>{c.name}</Text>
-                <Text testID={`category-count-${c.id}`} style={styles.tileCount} numberOfLines={1}>{countFor(c)}</Text>
+                <Text testID={`category-name-${c.id}`} style={[styles.tileName, tileW >= 140 && styles.largeName, dense && styles.denseName]} numberOfLines={2}>{c.name}</Text>
+                <Text testID={`category-count-${c.id}`} style={[styles.tileCount, dense && styles.denseCount]} numberOfLines={1}>{countFor(c)}</Text>
                 <CategorySelectionLight id={c.id} color={color} active={active} />
               </View>
               <CategoryTileEdge color={color} />
@@ -136,10 +139,13 @@ const useStyles = makeStyles((colors) => ({
     borderRadius: 18,
     backgroundColor: palette.surface,
   },
+  denseTile: { aspectRatio: 0.76, minHeight: 0, borderRadius: 14 },
   labels: { paddingHorizontal: 4, paddingBottom: 3, alignItems: "center" },
   tileName: { color: palette.text, fontFamily: typography.bodyMedium, fontSize: 12.5, lineHeight: 16, minHeight: 32, textAlign: "center", verticalAlign: "middle" },
   largeName: { fontSize: 15, lineHeight: 18, minHeight: 36 },
+  denseName: { fontSize: 10, lineHeight: 12.5, minHeight: 25 },
   tileCount: { color: palette.muted, fontFamily: typography.body, fontSize: 9, lineHeight: 12, textAlign: "center" },
+  denseCount: { fontSize: 8, lineHeight: 10 },
   pressed: { opacity: 0.86, transform: [{ scale: 0.98 }] },
   allLight: { position: "absolute", bottom: 3, left: 0, right: 0 },
   glassBg: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
